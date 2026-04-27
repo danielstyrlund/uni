@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/danstyrlund/.claude/**)",
+      "Bash(mkdir -p /Users/danstyrlund/Documents/Uni/Site/.github/workflows)",
+      "Bash(mkdir -p /Users/danstyrlund/Documents/Uni/Site/.claude)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
