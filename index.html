@@ -11,9 +11,9 @@
   <main>
     <div class="content">
       <h1 class="wordmark">Uni</h1>
-      <p class="line">Books, brands, film, and objects.</p>
+      <p class="line">Books, brands, and objects.</p>
       <p class="line">The design practice of Daniel Styrlund.</p>
-      <p class="line">Launching late 2026</p>
+      <p class="line">Launching late 2026.</p>
 
       <div class="email-section">
         <div class="pill">
@@ -50,6 +50,7 @@
 
   <script>
     const input = document.getElementById('email-input');
+    const pill = document.querySelector('.pill');
     const hint = document.querySelector('.pill-hint');
     const btn = document.querySelector('.submit-btn');
     const sendingEl = document.querySelector('.pill-sending');
@@ -83,7 +84,7 @@
     function adjustFontSize() {
       if (!baseFontSize) cacheBaseFont();
       const cs = getComputedStyle(input);
-      const available = input.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 8;
+      const available = input.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 20;
       const textWidth = measureText(input.value, baseFontStr);
       if (textWidth > available) {
         const size = Math.max(MIN_FONT, Math.floor(baseFontSize * available / textWidth));
@@ -95,10 +96,12 @@
 
     input.addEventListener('input', () => {
       if (input.value.length > 0) {
+        pill.classList.add('has-value');
         hint.classList.add('hidden');
         btn.classList.remove('exiting');
         btn.classList.add('visible');
       } else {
+        pill.classList.remove('has-value');
         hint.classList.remove('hidden');
         btn.classList.remove('visible');
       }
