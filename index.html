@@ -2,13 +2,150 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Uni — Coming Soon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Uni</title>
+  <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main>
-    <p>Test</p>
+    <div class="content">
+      <h1 class="wordmark">Uni</h1>
+      <p class="line">Books, brands, film, and objects.</p>
+      <p class="line">The design practice of Daniel Styrlund.</p>
+      <p class="line">Launching late 2026</p>
+
+      <div class="email-section">
+        <div class="pill">
+          <span class="pill-hint" aria-hidden="true">@</span>
+          <input
+            type="email"
+            id="email-input"
+            placeholder="Notify me"
+            autocomplete="off"
+            spellcheck="false"
+            autocorrect="off"
+            autocapitalize="none"
+          >
+          <span class="pill-sending" aria-hidden="true">Sending<span class="s-dot"></span><span class="s-dot"></span><span class="s-dot"></span></span>
+          <button type="button" class="submit-btn" aria-label="Submit email">→</button>
+        </div>
+      </div>
+
+      <a
+        href="https://www.instagram.com/uni_nyc"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="instagram-link"
+        aria-label="Uni on Instagram"
+      >
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" stroke-width="1.75"/>
+          <circle cx="12" cy="12" r="4.25" stroke="currentColor" stroke-width="1.75"/>
+          <circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/>
+        </svg>
+      </a>
+    </div>
   </main>
+
+  <script>
+    const input = document.getElementById('email-input');
+    const hint = document.querySelector('.pill-hint');
+    const btn = document.querySelector('.submit-btn');
+    const sendingEl = document.querySelector('.pill-sending');
+    const emailSection = document.querySelector('.email-section');
+
+    const MIN_FONT = 11;
+    const _canvas = document.createElement('canvas');
+    let baseFontSize = 0;
+    let baseFontStr = '';
+
+    function cacheBaseFont() {
+      const saved = input.style.fontSize;
+      input.style.fontSize = '';
+      const cs = getComputedStyle(input);
+      baseFontSize = parseFloat(cs.fontSize);
+      baseFontStr = cs.font;
+      if (saved) input.style.fontSize = saved;
+    }
+
+    // Cache after Skandia loads for accurate canvas measurement
+    document.fonts.ready.then(cacheBaseFont);
+    // Refresh on resize since font-size uses clamp()
+    window.addEventListener('resize', cacheBaseFont);
+
+    function measureText(text, font) {
+      const ctx = _canvas.getContext('2d');
+      ctx.font = font;
+      return ctx.measureText(text).width;
+    }
+
+    function adjustFontSize() {
+      if (!baseFontSize) cacheBaseFont();
+      const cs = getComputedStyle(input);
+      const available = input.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 8;
+      const textWidth = measureText(input.value, baseFontStr);
+      if (textWidth > available) {
+        const size = Math.max(MIN_FONT, Math.floor(baseFontSize * available / textWidth));
+        input.style.fontSize = size + 'px';
+      } else {
+        input.style.fontSize = '';
+      }
+    }
+
+    input.addEventListener('input', () => {
+      if (input.value.length > 0) {
+        hint.classList.add('hidden');
+        btn.classList.remove('exiting');
+        btn.classList.add('visible');
+      } else {
+        hint.classList.remove('hidden');
+        btn.classList.remove('visible');
+      }
+      adjustFontSize();
+    });
+
+    // Clear placeholder on focus so caret appears alone
+    input.addEventListener('focus', () => {
+      if (!input.value) input.placeholder = '';
+    });
+    input.addEventListener('blur', () => {
+      if (!input.value) input.placeholder = 'Notify me';
+    });
+
+    function submit() {
+      const email = input.value.trim();
+      if (!email) return;
+
+      // 1. Button exits
+      btn.classList.remove('visible');
+      btn.classList.add('exiting');
+
+      // 2. Email text dissolves
+      input.classList.add('dissolving');
+
+      // 3. Fire to Formspree (replace YOUR_FORM_ID with your endpoint)
+      fetch('https://formspree.io/f/YOUR_FORM_ID', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      }).catch(() => {});
+
+      // 4. After dissolve: swap input for "Sending..." label
+      setTimeout(() => {
+        input.value = '';
+        input.style.fontSize = '';
+        input.style.visibility = 'hidden';
+        input.classList.remove('dissolving');
+        sendingEl.classList.add('visible');
+      }, 200);
+
+      // 5. Exit pill once dots have animated in and user has seen the state
+      setTimeout(() => emailSection.classList.add('exit'), 1300);
+    }
+
+    btn.addEventListener('click', submit);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+  </script>
 </body>
 </html>

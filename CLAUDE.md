@@ -4,6 +4,10 @@
 
 Uni is a design studio. The site will eventually cover portfolio, e-commerce, and video. Right now we are building the holding page; the full site comes after.
 
+## Working Style
+
+**Always propose a plan and wait for explicit approval before writing any code.** This includes corrections, tweaks, and visual adjustments — not just new features. No exceptions for "it seems simple." Present the plan, wait for approval, then build.
+
 ## Design Direction
 
 Apple-level simplicity and sophistication. Clean, friendly animations — nothing flashy or excessive. Intuitive layouts, subtle details, no flair. When in doubt, do less.

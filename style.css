@@ -1,19 +1,282 @@
+@font-face {
+  font-family: 'ABCStefan';
+  src: url('fonts/ABCStefan-Simple.woff2') format('woff2'),
+       url('fonts/ABCStefan-Simple.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Skandia';
+  src: url('fonts/SkandiaSN-Book.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  background: #fff;
-  color: #000;
-  height: 100vh;
+  background: #f5f5f5;
+  color: #1a1a1a;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem;
+  padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom) + 1.5rem));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-main {
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+
+.wordmark {
+  font-family: 'ABCStefan', sans-serif;
+  font-weight: 400;
+  font-size: clamp(36px, 10vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  margin-bottom: 2rem;
+}
+
+.line {
+  font-family: 'Skandia', sans-serif;
+  font-weight: 400;
+  font-size: clamp(18px, 4.5vw, 26px);
+  line-height: 1.44;
+}
+
+/* ── Email section ── */
+
+.email-section {
+  margin-top: 2.5rem;
+  max-height: 200px;
+  overflow: hidden;
+  transition:
+    opacity 0.38s ease,
+    transform 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+    max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.18s,
+    margin-top 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.18s;
+}
+
+.email-section.exit {
+  opacity: 0;
+  transform: translateY(-14px);
+  max-height: 0;
+  margin-top: 0;
+}
+
+/* Pill */
+
+.pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 999px;
+  width: min(460px, 88vw);
+  height: 52px;
+  padding: 0;
+  overflow: hidden;
+  transition: background 0.25s ease;
+}
+
+/* Hint circle */
+
+.pill-hint {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'ABCStefan', sans-serif;
+  font-size: 20px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.32);
+  pointer-events: none;
+  user-select: none;
+  opacity: 1;
+  transform: scale(1) translateX(0);
+  /* Spring easing for re-entry (same as submit button entry) */
+  transition:
+    opacity 0.28s ease,
+    transform 0.42s cubic-bezier(0.34, 1.75, 0.64, 1);
+}
+
+.pill-hint.hidden {
+  opacity: 0;
+  transform: scale(0.65) translateX(-10px);
+  /* Quick ease for exit */
+  transition:
+    opacity 0.18s ease,
+    transform 0.22s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.pill:hover,
+.pill:focus-within {
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Sending label */
+
+.pill-sending {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Skandia', sans-serif;
+  font-size: clamp(18px, 4.5vw, 26px);
+  color: rgba(0, 0, 0, 0.32);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  z-index: 1;
+  transition: opacity 0.15s ease;
+}
+
+.pill-sending.visible {
+  opacity: 1;
+}
+
+.s-dot::before {
+  content: '.';
+  display: inline;
+  opacity: 0;
+}
+
+.pill-sending.visible .s-dot::before {
+  animation: dotAppear 0.18s ease-out forwards;
+}
+
+.pill-sending.visible .s-dot:nth-child(1)::before { animation-delay: 0ms; }
+.pill-sending.visible .s-dot:nth-child(2)::before { animation-delay: 220ms; }
+.pill-sending.visible .s-dot:nth-child(3)::before { animation-delay: 440ms; }
+
+@keyframes dotAppear {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Input */
+
+#email-input {
+  width: 100%;
+  padding: 0 52px;
+  background: none;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  font-family: 'Skandia', sans-serif;
+  font-size: clamp(18px, 4.5vw, 26px);
+  color: #1a1a1a;
+  -webkit-text-fill-color: #1a1a1a;
+  text-align: center;
+  caret-color: #1a1a1a;
+  transition: -webkit-text-fill-color 0.18s ease, color 0.18s ease, font-size 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#email-input::placeholder {
+  color: rgba(0, 0, 0, 0.32);
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.32);
+  text-align: center;
+}
+
+#email-input.dissolving {
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  caret-color: transparent;
+}
+
+
+/* Submit button */
+
+.submit-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: #007AFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: 'ABCStefan', sans-serif;
+  font-size: 20px;
+  line-height: 1;
+  color: white;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0;
+  transform: scale(0.65) translateX(10px);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s cubic-bezier(0.4, 0, 1, 1),
+    background 0.15s ease;
+}
+
+.submit-btn.visible {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+  transition:
+    opacity 0.28s ease,
+    transform 0.42s cubic-bezier(0.34, 1.75, 0.64, 1),
+    background 0.15s ease;
+}
+
+.submit-btn.exiting {
+  opacity: 0;
+  transform: scale(0.65) translateX(10px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.22s cubic-bezier(0.4, 0, 1, 1),
+    background 0.15s ease;
+}
+
+.submit-btn:not(.exiting):hover {
+  background: #0071e3;
+}
+
+.submit-btn:not(.exiting):active {
+  background: #0062c8;
+}
+
+/* Instagram */
+
+.instagram-link {
+  margin-top: 2.5rem;
+  color: rgba(0, 0, 0, 0.26);
+  display: block;
+  line-height: 0;
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.instagram-link:hover {
+  color: rgba(0, 0, 0, 0.9);
 }
