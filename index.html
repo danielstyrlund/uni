@@ -12,8 +12,8 @@
     <div class="content">
       <h1 class="wordmark">Uni</h1>
       <p class="line">Books, brands, and objects.</p>
-      <p class="line">The design practice of Daniel Styrlund.</p>
-      <p class="line">Launching late 2026.</p>
+      <p class="line">A design practice by Daniel Styrlund.</p>
+      <p class="line">New York. Late 2026.</p>
 
       <div class="email-section">
         <div class="pill">
@@ -49,6 +49,11 @@
   </main>
 
   <script>
+    const content = document.querySelector('.content');
+    const show = () => content.classList.add('fonts-loaded');
+    document.fonts.ready.then(show);
+    setTimeout(show, 3000);
+
     const input = document.getElementById('email-input');
     const pill = document.querySelector('.pill');
     const hint = document.querySelector('.pill-hint');
